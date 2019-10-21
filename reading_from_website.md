@@ -129,3 +129,97 @@ reviews
 
 This is the right way of selecting stars from amazon. Don’t use
 selectgadget to select stars. `#cm_cr-review_list .review-rating`
+
+## another way to get contents from the web, API
+
+``` r
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/waf7-5gvc.csv") %>% 
+  # this code just simply view the reading url as reading a csv file and turn it into a useful format
+  content("parsed")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   year = col_double(),
+    ##   new_york_city_population = col_double(),
+    ##   nyc_consumption_million_gallons_per_day = col_double(),
+    ##   per_capita_gallons_per_person_per_day = col_double()
+    ## )
+
+We can also import this dataset as a JSON file. This takes a bit more
+work, but it’s still doable.
+
+``` r
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/waf7-5gvc.json") %>% 
+  content("text") %>%
+  jsonlite::fromJSON() %>%
+  as_tibble()
+```
+
+``` r
+brfss_smart2010 = 
+  GET("https://data.cdc.gov/api/views/waxm-p5qv/rows.csv?accessType=DOWNLOAD") %>% 
+  content("parsed")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_character(),
+    ##   Year = col_double(),
+    ##   Locationabbr = col_double(),
+    ##   Sample_Size = col_double(),
+    ##   Data_value = col_double(),
+    ##   Confidence_limit_Low = col_double(),
+    ##   Confidence_limit_High = col_double(),
+    ##   Display_order = col_double(),
+    ##   LocationID = col_double()
+    ## )
+
+    ## See spec(...) for full column specifications.
+
+``` r
+poke = 
+  GET("http://pokeapi.co/api/v2/pokemon/1") %>%
+  content()
+
+poke$name
+```
+
+    ## [1] "bulbasaur"
+
+``` r
+poke$abilities
+```
+
+    ## [[1]]
+    ## [[1]]$ability
+    ## [[1]]$ability$name
+    ## [1] "chlorophyll"
+    ## 
+    ## [[1]]$ability$url
+    ## [1] "https://pokeapi.co/api/v2/ability/34/"
+    ## 
+    ## 
+    ## [[1]]$is_hidden
+    ## [1] TRUE
+    ## 
+    ## [[1]]$slot
+    ## [1] 3
+    ## 
+    ## 
+    ## [[2]]
+    ## [[2]]$ability
+    ## [[2]]$ability$name
+    ## [1] "overgrow"
+    ## 
+    ## [[2]]$ability$url
+    ## [1] "https://pokeapi.co/api/v2/ability/65/"
+    ## 
+    ## 
+    ## [[2]]$is_hidden
+    ## [1] FALSE
+    ## 
+    ## [[2]]$slot
+    ## [1] 1

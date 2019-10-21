@@ -116,5 +116,41 @@ This is the right way of selecting stars from amazon. Don't use selectgadget to 
 stars. `#cm_cr-review_list .review-rating`
 
 
+## another way to get contents from the web, API
+
+```{r}
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/waf7-5gvc.csv") %>% 
+  # this code just simply view the reading url as reading a csv file and turn it into a useful format
+  content("parsed")
+```
+
+
+We can also import this dataset as a JSON file. This takes a bit more work, but it’s still doable.
+```{r}
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/waf7-5gvc.json") %>% 
+  content("text") %>%
+  jsonlite::fromJSON() %>%
+  as_tibble()
+```
+
+
+```{r}
+brfss_smart2010 = 
+  GET("https://data.cdc.gov/api/views/waxm-p5qv/rows.csv?accessType=DOWNLOAD") %>% 
+  content("parsed")
+```
+
+
+```{r}
+poke = 
+  GET("http://pokeapi.co/api/v2/pokemon/1") %>%
+  content()
+
+poke$name
+poke$abilities
+```
+
 
 
