@@ -29,4 +29,92 @@ scale_fill_discrete = scale_fill_viridis_d
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
 
+## get some data
+
+```{r}
+url = "http://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm"
+
+# we want to pull out something we care about, for example, table!
+drug_use_xml = 
+  read_html(url)
+
+drug_use_xml %>% 
+  html_nodes(css = "table")
+
+## everything before the pipe gonna appear at the dot.
+table_marj = 
+  (drug_use_xml %>% html_nodes(css = "table")) %>% 
+  .[[1]] %>% 
+  html_table() %>% 
+  slice(-1) %>% 
+  as_tibble()
+```
+
+
+## get Hery Potter data
+
+```{r}
+hpsaga_html = 
+  read_html("https://www.imdb.com/list/ls000630791/")
+
+hp_movie_names = 
+  hpsaga_html %>% 
+  html_nodes(".lister-item-header a") %>% 
+  html_text()
+
+hp_movie_runtime = 
+  hpsaga_html %>% 
+  html_nodes(".runtime") %>% 
+  html_text()
+
+hp_movie_money = 
+  hpsaga_html %>% 
+  html_nodes(".text-small:nth-child(7) span:nth-child(5)") %>% 
+  html_text()
+
+hp_df = 
+  tibble(
+    title = hp_movie_names,
+    runtime = hp_movie_runtime,
+    money = hp_movie_money
+  )
+hp_df
+```
+
+
+## get napoleon
+
+```{r}
+url = "https://www.amazon.com/product-reviews/B00005JNBQ/ref=cm_cr_arp_d_viewopt_rvwer?ie=UTF8&reviewerType=avp_only_reviews&sortBy=recent&pageNumber=1"
+
+dynamite_html = read_html(url)
+
+review_titles = 
+  dynamite_html %>%
+  html_nodes(".a-text-bold span") %>%
+  html_text()
+
+review_stars = 
+  dynamite_html %>%
+  html_nodes("#cm_cr-review_list .review-rating") %>%
+  html_text()
+
+review_text = 
+  dynamite_html %>%
+  html_nodes(".review-text-content span") %>%
+  html_text()
+
+reviews = tibble(
+  title = review_titles,
+  stars = review_stars,
+  text = review_text
+)
+reviews
+```
+
+This is the right way of selecting stars from amazon. Don't use selectgadget to select 
+stars. `#cm_cr-review_list .review-rating`
+
+
+
 
